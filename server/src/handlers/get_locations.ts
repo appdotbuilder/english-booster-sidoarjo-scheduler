@@ -1,7 +1,16 @@
+import { db } from '../db';
+import { locationsTable } from '../db/schema';
 import { type Location } from '../schema';
 
-export async function getLocations(): Promise<Location[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all locations/rooms from the database.
-    return [];
-}
+export const getLocations = async (): Promise<Location[]> => {
+  try {
+    const result = await db.select()
+      .from(locationsTable)
+      .execute();
+
+    return result;
+  } catch (error) {
+    console.error('Failed to fetch locations:', error);
+    throw error;
+  }
+};

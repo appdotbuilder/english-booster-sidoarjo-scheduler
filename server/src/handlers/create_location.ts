@@ -1,12 +1,22 @@
+import { db } from '../db';
+import { locationsTable } from '../db/schema';
 import { type CreateLocationInput, type Location } from '../schema';
 
-export async function createLocation(input: CreateLocationInput): Promise<Location> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is creating a new location/room and persisting it in the database.
-    return Promise.resolve({
-        id: 0, // Placeholder ID
+export const createLocation = async (input: CreateLocationInput): Promise<Location> => {
+  try {
+    // Insert location record
+    const result = await db.insert(locationsTable)
+      .values({
         name: input.name,
-        branch: input.branch || 'Sidoarjo',
-        created_at: new Date()
-    } as Location);
-}
+        branch: input.branch // Zod schema already applies default value
+      })
+      .returning()
+      .execute();
+
+    const location = result[0];
+    return location;
+  } catch (error) {
+    console.error('Location creation failed:', error);
+    throw error;
+  }
+};
